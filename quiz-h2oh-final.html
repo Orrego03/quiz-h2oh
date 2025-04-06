@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz H2OH</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+      color: #034b63;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #007c91;
+      margin-bottom: 2rem;
+    }
+
+    .quiz-container, .chatbot-container {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .options button,
+    .mood-options button,
+    #restart-quiz,
+    #restart-chatbot {
+      display: block;
+      margin: 0.5rem auto;
+      padding: 1rem 2rem;
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .options button:hover,
+    .mood-options button:hover,
+    #restart-quiz:hover,
+    #restart-chatbot:hover {
+      background-color: #0097a7;
+    }
+
+    .result, #chatbot-result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: #006064;
+    }
+
+    .mood-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Descubre tu Burbuja H2OH</h1>
+
+  <div class="quiz-container">
+    <div class="question" id="question">1. ¿Qué plan prefieres un domingo?</div>
+    <div class="options" id="options"></div>
+    <div class="result" id="result"></div>
+    <button id="restart-quiz" onclick="resetQuiz()" style="display:none;">Reiniciar juego</button>
+  </div>
+
+  <div class="chatbot-container">
+    <h2>¿Qué sabor H2OH! eres?</h2>
+    <p>Elige tu mood y descubre tu match refrescante:</p>
+    <div class="mood-options">
+      <button onclick="responderChatbot('feliz')">😄 Estoy feliz</button>
+      <button onclick="responderChatbot('cansado')">😩 Estoy cansado</button>
+      <button onclick="responderChatbot('relajado')">😌 Quiero relajarme</button>
+      <button onclick="responderChatbot('atrevido')">😜 Me siento atrevid@</button>
+    </div>
+    <div id="chatbot-result"></div>
+    <button id="restart-chatbot" onclick="resetChatbot()" style="display:none;">Reiniciar chatbot</button>
+  </div>
+
+  <script>
+    // Quiz logic
+    const questions = [
+      {
+        question: "1. ¿Qué plan prefieres un domingo?",
+        options: ["Netflix y cobija", "Paseo con amigos", "Algo nuevo y espontáneo"]
+      },
+      {
+        question: "2. Tu mood hoy es...",
+        options: ["Relax total", "Sociable", "Aventurero"]
+      },
+      {
+        question: "3. Elige una paleta de colores",
+        options: ["Tonos suaves", "Colores vibrantes", "Colores pasteles"]
+      }
+    ];
+
+    let currentQuestion = 0;
+    let scores = [0, 0, 0];
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("question").textContent = q.question;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => selectOption(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function selectOption(index) {
+      scores[index]++;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      let maxIndex = scores.indexOf(Math.max(...scores));
+      let resultText = "";
+      if (maxIndex === 0) {
+        resultText = "🌿 Tu burbuja es Menta Chill: Eres relajado, te gusta la calma y disfrutar del momento.";
+      } else if (maxIndex === 1) {
+        resultText = "🍋 Tu burbuja es Limón Burst: Alegre, social y siempre con buena energía.";
+      } else {
+        resultText = "🍊 Tu burbuja es Pomelo Pop: Creativo, espontáneo y siempre buscando cosas nuevas.";
+      }
+      document.getElementById("result").textContent = resultText;
+      document.getElementById("question").textContent = "Resultado:";
+      document.getElementById("options").innerHTML = "";
+      document.getElementById("restart-quiz").style.display = "inline-block";
+    }
+
+    function resetQuiz() {
+      currentQuestion = 0;
+      scores = [0, 0, 0];
+      document.getElementById("result").textContent = "";
+      document.getElementById("restart-quiz").style.display = "none";
+      loadQuestion();
+    }
+
+    // Chatbot logic
+    function responderChatbot(mood) {
+      let mensaje = '';
+      switch (mood) {
+        case 'feliz':
+          mensaje = '🌞 ¡Tu sabor es *Limón*! Refrescante, brillante y lleno de energía como tú.';
+          break;
+        case 'cansado':
+          mensaje = '😴 ¡Tu sabor es *Frutos Rojos*! Suave, sutil y perfecto para recargar energías.';
+          break;
+        case 'relajado':
+          mensaje = '🌊 ¡Tu sabor es *Manzana*! Ligero, dulce y con la calma que necesitas.';
+          break;
+        case 'atrevido':
+          mensaje = '🔥 ¡Tu sabor es *Mandarina-Piña*! Explosivo, vibrante y perfecto para romper la rutina.';
+          break;
+      }
+      document.getElementById("chatbot-result").textContent = mensaje;
+      document.getElementById("restart-chatbot").style.display = "inline-block";
+    }
+
+    function resetChatbot() {
+      document.getElementById("chatbot-result").textContent = "";
+      document.getElementById("restart-chatbot").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", loadQuestion);
+  </script>
+</body>
+</html>
